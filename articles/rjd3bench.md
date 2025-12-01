@@ -206,6 +206,18 @@ smoothing effect, can be applied on the output object of the functions
 and
 [`temporal_interpolation()`](https://rjdverse.github.io/rjd3bench/reference/temporal_interpolation.md).
 
+In practice, Chow-Lin and its variants Fernandez and Litterman are
+estimated based on an equivalent state space representation of the
+model, which makes it possible to obtain estimates in a very efficient
+way. Note that, by default, for Fernandez and Litterman, a diffuse
+initialization is considered for the estimation of the initial values of
+the states so that those integrate the constant estimates. The latter is
+thus ‘hidden’ and does not appear in the results. To make the estimates
+of the constant visible (and therefore finding back the usual output
+from the classic formulation of the model), one option is to change the
+argument`zeroinitialization = TRUE` with `constant=TRUE` before running
+the function.
+
 ### Model-based Denton
 
 Denton method and variants are usually expressed in mathematical terms
@@ -272,7 +284,11 @@ with their respective 95% confidence interval.
 
 ### Autoregressive Distributed Lag (ADL) Models
 
-(Upcoming content)
+\[Upcoming content\]
+
+### Inverse regression
+
+\[Upcoming content\]
 
 ## Benchmarking methods
 
@@ -432,7 +448,7 @@ method.
 Cubic splines are piecewise cubic functions that are linked together in
 a way to guarantee smoothness at data points. Additivity constraints are
 added for benchmarking purpose and sub-period estimates are derived from
-each spline. When a sub-period indicator (or disaggregated series) is
+each spline. When a sub-period indicator (or a preliminary series) is
 used, cubic splines are no longer drawn based on the low frequency data
 but the Benchmark-to-Indicator (BI ratio) is the one being smoothed.
 Sub-period estimates are then simply the product between the smoothed
@@ -443,10 +459,11 @@ The method can be called through the
 function. Here are a few examples on how to use it:
 
 ``` r
-y_cs1 <- rjd3bench::cubicspline(t = Y, nfreq = 4) # example of cubic spline without high frequency series (smoothing)
+# Example: use cubic splines for benchmarking
+y_cs1 <- rjd3bench::cubicspline(t = Y, nfreq = 4) # without high frequency series (smoothing)
 
 x <- y_cs1 + rnorm(n = length(y_cs1), mean = 0, sd = 10)
-y_cs2 <- rjd3bench::cubicspline(s = x, t = Y) # example of cubic spline with a high frequency series to benchmark
+y_cs2 <- rjd3bench::cubicspline(s = x, t = Y) # with a high frequency preliminary series to benchmark
 ```
 
 The
@@ -473,9 +490,9 @@ constraints $\sum_{t\epsilon T}y_{t} = Y_{T}$, $T = 1,...,m$ (flows
 variables). The method is driven by a couple of parameters:
 
 - The adjustment model parameter $\lambda$, $\lambda \in {\mathbb{R}}$.
-  Set $\lambda = 1$ for a proportional benchmarking model. Two other
-  choices are $\lambda = 0$ for an additive benchmarking model; and
-  $\lambda = 0.5$ with $\rho = 0$, for the naive pro-rating method.  
+  Set $\lambda = 0$ for an additive benchmarking model and $\lambda = 1$
+  for a proportional benchmarking model. Finally, set $\lambda = 0.5$
+  with $\rho = 0$, for the naive pro-rating method.  
 - The smoothing parameter $\rho$, $0 \leq \rho \leq 1$. $\rho$
   determines the degree of movement preservation. When $\lambda = 1$,
   the closer $\rho$ is to 1, the smoother will be the ratios of the
@@ -544,10 +561,9 @@ The
 function returns the high frequency series benchmarked with the Cholette
 method.
 
-It should be noted that, in practice, the benchmarked series is
-estimated based on an equivalent state space representation of the
-Cholette method described above, which makes it possible to obtain
-estimates in a very efficient way.
+In practice, the benchmarked series is estimated based on an equivalent
+state space representation of the Cholette method described above, which
+makes it possible to obtain estimates in a very efficient way.
 
 ## Reconciliation and multivariate temporal disaggregation
 
@@ -593,16 +609,18 @@ As in the univariate case, the multivariate Cholette method is driven by
 a couple of parameters:
 
 - The adjustment model parameter $\lambda$, $\lambda \in {\mathbb{R}}$.
-  Set $\lambda = 0$ for an additive benchmarking model and $\lambda$
-  close to 1 to approach a proportional benchmarking model. Setting
-  $\lambda = 1$ is also an option, but this should be used with caution
-  in the case of a multivariate model. Indeed, the addition of
-  contemporaneous constraints and the fact that only the ratio between
-  the benchmarked series and the preliminary series is being preserved
-  (and not at all the level of the preliminary series) might, in some
-  cases, result in benchmarked series whose level differs strongly from
-  the preliminary series. Finally, the naive pro-rating method
-  corresponds to setting $\lambda = 0.5$ with $\rho = 0$.
+  Set $\lambda = 0$ for an additive model and $\lambda$ close to 1 to
+  approximate a proportional model; while $\lambda = 1$ is also
+  possible, it should be used cautiously in a multivariate context. This
+  is because contemporaneous constraints combined with the fact that
+  pure movement preservation specifies nothing about the level of the
+  individual reconciled series may sometimes produce substantial
+  differences in level between the preliminary and the benchmarked
+  series. This is especially true in the absence of temporal constraints
+  where strong movement preservation should not be pursued during
+  reconciliation. Finally, as in the univariate case, the naive
+  pro-rating method corresponds to setting $\lambda = 0.5$ with
+  $\rho = 0$.
 
 - The smoothing parameter $\rho$, $0 \leq \rho \leq 1$. $\rho$
   determines the degree of movement preservation. When $\lambda = 1$,
@@ -644,21 +662,90 @@ The
 function returns a list of benchmarked series, fulfilling both the
 contemporary and the temporal constraints (if any).
 
-It should be noted that, in practice, the benchmarked series are
-estimated based on an equivalent state space representation of the
-multivariate Cholette method described above, which makes it possible to
-obtain estimates in a very efficient way.
+In practice, the benchmarked series are estimated based on an equivalent
+state space representation of the multivariate Cholette method described
+above, which makes it possible to obtain estimates in a very efficient
+way.
 
 ## Calendarization
 
-(Upcoming content)
+Time series data do not always coincide with calendar periods (e.g.,
+fiscal years starting in March-April or retail data collected in
+non-monthly intervals). Calendarization is the process of transforming
+the values of a flow time series observed over varying time intervals
+into values that cover given calendar intervals such as month, quarter
+or year.
+
+The calendarization process involves two steps:
+
+- Temporal disaggregation of the observed data into daily values using
+  or not an indicator
+- Aggregation of the resulting daily values into the desired calendar
+  reference periods.
+
+Based on the paper from Quenneville et al (2012), the temporal
+disaggregation step is performed by considering a state-space
+representation of the Denton proportional first difference (PFD) method.
+Recall the objective function of the (modified) Denton PFD method  
+$$min_{y_{t}}\sum\limits_{t = 2}^{n}\lbrack\frac{y_{t}}{x_{t}} - \frac{y_{t - 1}}{x_{t - 1}}\rbrack^{2}$$
+which is minimized under the temporal aggregation constraints
+$$\sum\limits_{t\epsilon l}y_{t} = Y_{l}$$$Y_{l}$, $l = 1,...,q$, are
+the observed values to be distributed and $x_{t}$, $t = 1,...,n$ are the
+daily indicator values that represent the daily movement of the unknown
+target variable $y_{t}$. In the absence of such information, a constant
+indicator (say, a vector of 1) is used instead.
+
+The calendarization process can be called with the
+[`calendarization()`](https://rjdverse.github.io/rjd3bench/reference/calendarization.md)
+function. By default, a constant indicator is considered which means
+that the daily level of activity is assumed to be constant. To include
+an indicator into the disaggregation process, the function parameter
+`dailyweights` has to be filled. If provided, the daily indicator values
+(or weights) should reflect the daily level of activity that may be
+varying in function for instance of seasonality, trading day or other
+calendar effects such as public holidays.
+
+``` r
+# Example of calendarization (from Quenneville et al (2012))
+
+## Observed data 
+obs <- list(
+    list(start = "2009-02-18", end = "2009-03-17", value = 9000),
+    list(start = "2009-03-18", end = "2009-04-14", value = 5000),
+    list(start = "2009-04-15", end = "2009-05-12", value = 9500),
+    list(start = "2009-05-13", end = "2009-06-09", value = 7000))
+
+## calendarization in absence of daily indicator values (or weights)
+cal_1 <- calendarization(obs, 12, end = "2009-06-30", dailyweights = NULL, stde = TRUE)
+
+ym_1 <- cal_1$rslt
+eym_1 <- cal_1$erslt
+yd_1 <- cal_1$days
+eyd_1 <- cal_1$edays
+
+## calendarization in presence of daily indicator values (or weights)
+x <- rep(c(1.0, 1.2, 1.8 , 1.6, 0.0, 0.6, 0.8), 19)
+cal_2 <- calendarization(obs, 12, end = "2009-06-30", dailyweights = x, stde = TRUE)
+
+ym_2 <- cal_2$rslt
+eym_2 <- cal_2$erslt
+yd_2 <- cal_2$days
+eyd_2 <- cal_2$edays
+```
+
+The
+[`calendarization()`](https://rjdverse.github.io/rjd3bench/reference/calendarization.md)
+function returns a list with the final aggregated results (after running
+the two steps process described above) and their associated errors, as
+well as the disaggregated daily values (after running the first step
+only) and their associated errors.
 
 ## References
 
 Causey, B., and Trager, M.L. (1981). Derivation of Solution to the
-Benchmarking Problem: Trend Revision. Unpublished research notes, U.S.
+Benchmarking Problem: Trend Revision. *Unpublished research notes, U.S.
 Census Bureau, Washington D.C. Available as an appendix in Bozik and
-Otto (1988).
+Otto (1988).*
 
 Chamberlin, G. (2010). Temporal disaggregation. *ONS Economic & Labour
 Market Review*.
@@ -676,10 +763,18 @@ Dagum, E. B., and Cholette, P. A. (2006): Benchmarking, Temporal
 Distribution and Reconciliation Methods of Time Series.
 *Springer-Verlag, New York, Lecture notes in Statistics*.
 
+Proietti, P. (2005). Temporal Disaggregation by State Space Methods:
+Dynamic Regression Methods Revisited. *Working papers and Studies,
+European Commission, ISSN 1725-4825*.
+
 Quenneville, B., Fortier S., Chen Z.-G., Latendresse E. (2006). Recent
 Developments in Benchmarking to Annual Totals in X12-ARIMA and at
 Statistics Canada. *Statistics Canada, Working paper of the Time Series
 Research and Analysis Centre*.
+
+Quenneville, B., Picard F., Fortier S. (2012). Calendarization with
+interpolating splines and state space models. *Statistics Canada, Appl.
+Statistics (2013) 62, part 3, pp 371-399*.
 
 Quilis, EM. (2018). Temporal disaggregation of economic time series -
 The view from the trenches. *Statistica Neerlandica, Wiley*.

@@ -12,13 +12,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 #### Added
 
-- Add function documentation and vignette for multivariate Cholette
+- Add function documentation and vignette for multivariateCholette and
+  Calendarization
 
 #### Changed
 
+- Default value of lambda is changed to 0.8 in multivariate Cholette
 - Re-ordering of the returned benchmarked series in multivariate
   Cholette
-- Default value of lambda is changed to 0 in multivariate Cholette
 
 ### [3.0.0](https://github.com/rjdverse/rjd3bench/compare/v2.1.0...v3.0.0) - 2025-05-12
 
