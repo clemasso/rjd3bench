@@ -883,26 +883,27 @@ tc <- c("Y1 = sum(x1)", "Y2 = sum(x2)", "Y3 = sum(x3)") # temporal constraints
 cc <- c("z = x1+x2+x3") # (binding) contemporaneous constraint
 cc_nb <- c("0 = x1+x2+x3-z") # non-binding contemporaneous constraint
 
-rec1 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = .5, lambda = .5) # trade-off values for rho and lambda
+rec1 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc) # default values for rho and lambda
 print(rec1)
 #> $x1
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 7.051902 7.371871 8.069296 7.506931
-#> 2011 7.916967 6.956146 7.572586 8.154301
+#> 2010 7.069397 7.385899 8.058519 7.486185
+#> 2011 7.961343 6.987044 7.570753 8.080860
 #> 
 #> $x2
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 18.55737 20.59774 19.80615 21.03874
-#> 2011 19.19172 19.27605 21.37229 21.35994
+#> 2010 18.55572 20.58942 19.80927 21.04559
+#> 2011 19.16716 19.25396 21.37039 21.40849
 #> 
 #> $x3
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 1.490728 1.830389 2.024550 2.654333
-#> 2011 2.191317 1.667802 1.955124 2.285758
-rec2 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 1) # Denton
-rec3 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 0.729) # Cholette
-rec4 <- multivariatecholette(xlist = data_list, tcvector = NULL, ccvector = cc) # no temporal constraints
-rec5 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc_nb) # non-binding contemporaneous constraint
+#> 2010 1.474880 1.824683 2.032208 2.668230
+#> 2011 2.171499 1.658994 1.958861 2.310646
+rec2 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = .5, lambda = .5) # trade-off values for rho and lambda
+rec3 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 1) # Denton
+rec4 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 0.729) # Cholette
+rec5 <- multivariatecholette(xlist = data_list, tcvector = NULL, ccvector = cc) # no temporal constraints
+rec6 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc_nb) # non-binding contemporaneous constraint
 ```
 
 ## Calendarization
