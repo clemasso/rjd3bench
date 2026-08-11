@@ -100,12 +100,12 @@ multivariatechowlin(
 
   A character string specifying the method used to estimate the
   variance-covariance matrix of the innovations. The default is
-  `"fromUnivariate"`, meaning that is is estimated from the residuals of
-  the univariate models. Others options include `"allEquals"`, which
-  assume a diagonal matrix with identical variances (a strong
-  assumption), and `"userDefined"`, where the matrix is supplied by the
-  user via the `var.matrix` argument. For additional details, see the
-  package vignette.
+  `"fromUnivariate"`, meaning that it is estimated empirically from the
+  residuals of the univariate models. Others options include
+  `"allEquals"`, which assume a diagonal matrix with identical variances
+  (a strong assumption), and `"userDefined"`, where the matrix is
+  supplied by the user via the `var.matrix` argument. For additional
+  details, see the package vignette.
 
 - var.includeCov:
 
@@ -130,7 +130,7 @@ multivariatechowlin(
 ## Value
 
 An object of class "JD3_MULTITEMPDISAGG_RSLTS" is returned. The
-following are returned invisibly as a list:
+following are returned as a list:
 
 - `regression` `[[1]]` regression coefficients for each series;
 
@@ -179,21 +179,28 @@ rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # ok!
 
 # Estimate models and get results
 
-## Mix Chow-Lin - Fernandez, assuming no covariance in the innovations
-rslt1 <- multivariatechowlin(series = lf_series,
-                             constant = c(FALSE, FALSE, TRUE),
-                             trend = c(FALSE, FALSE, FALSE),
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = c(0.85, 1.0, 0.9),
-                             var = "fromUnivariate",
-                             var.includeCov = FALSE,
-                             var.shrinkCov = FALSE,
-                             var.matrix = NULL)
+## Mix Chow-Lin and Fernandez definitions
 
-do.call(cbind, rslt1$estimation$disagg) # disaggregated series
+### with var-cov matrix estimated from the univariate models, assuming zero covariances
+mtd1 <- multivariatechowlin(series = lf_series,
+                            constant = c(FALSE, FALSE, TRUE),
+                            trend = c(FALSE, FALSE, FALSE),
+                            indicators = indic_series,
+                            ccseries = list(z = z),
+                            ccdefinition = "z=y1+y2+y3",
+                            freq = 4L,
+                            rhos = c(0.85, 1.0, 0.9),
+                            var = "fromUnivariate",
+                            var.includeCov = FALSE,
+                            var.shrinkCov = FALSE,
+                            var.matrix = NULL)
+
+mtd1$estimation$vcov # variance-covariance matrix of the innovations
+#>             [,1]       [,2]         [,3]
+#> [1,] 0.001433366 0.00000000 0.0000000000
+#> [2,] 0.000000000 0.01248872 0.0000000000
+#> [3,] 0.000000000 0.00000000 0.0008793077
+do.call(cbind, mtd1$estimation$disagg) # disaggregated series
 #>               y1       y2       y3
 #> 2010 Q1 6.939861 19.07979 1.080352
 #> 2010 Q2 7.943542 20.14422 1.712236
@@ -212,26 +219,26 @@ do.call(cbind, rslt1$estimation$disagg) # disaggregated series
 #> 2013 Q3 8.533515 20.43936 1.727128
 #> 2013 Q4 8.470332 21.06128 2.468392
 
-## Mix Chow-Lin - Fernandez, using a shrinkage covariance estimator for the innovations
-rslt2 <- multivariatechowlin(series = lf_series,
-                             constant = c(FALSE, FALSE, TRUE),
-                             trend = c(FALSE, FALSE, FALSE),
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = c(0.85, 1.0, 0.9),
-                             var = "fromUnivariate",
-                             var.includeCov = TRUE,
-                             var.shrinkCov = TRUE,
-                             var.matrix = NULL)
+### with var-cov matrix estimated from the univariate models, using a shrinkage estimator for the covariance
+mtd2 <- multivariatechowlin(series = lf_series,
+                            constant = c(FALSE, FALSE, TRUE),
+                            trend = c(FALSE, FALSE, FALSE),
+                            indicators = indic_series,
+                            ccseries = list(z = z),
+                            ccdefinition = "z=y1+y2+y3",
+                            freq = 4L,
+                            rhos = c(0.85, 1.0, 0.9),
+                            var = "fromUnivariate",
+                            var.includeCov = TRUE,
+                            var.shrinkCov = TRUE,
+                            var.matrix = NULL)
 
-rslt2$estimation$vcov # variance-covariance matrix of the innovations
+mtd2$estimation$vcov
 #>               [,1]          [,2]          [,3]
 #> [1,]  1.295161e-03 -0.0011701081 -8.709044e-05
 #> [2,] -1.170108e-03  0.0124887216  3.869829e-04
 #> [3,] -8.709044e-05  0.0003869829  5.469873e-05
-do.call(cbind, rslt2$estimation$disagg)
+do.call(cbind, mtd2$estimation$disagg)
 #>               y1       y2       y3
 #> 2010 Q1 7.032124 18.38361 1.684270
 #> 2010 Q2 7.867589 20.02459 1.907825
@@ -250,25 +257,32 @@ do.call(cbind, rslt2$estimation$disagg)
 #> 2013 Q3 8.479224 20.27804 1.942738
 #> 2013 Q4 8.417651 21.39175 2.190598
 
-## Fernandez only (Random walk model) with user-defined variance-covariance matrix
-rslt3 <- multivariatechowlin(series = lf_series,
-                             constant = FALSE,
-                             trend = FALSE,
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = 1.0,
-                             var = "userDefined",
-                             var.matrix = matrix(
+## Multivariate random walk model (multivariate Fernandez)
+
+### with var-cov matrix provided by the user
+mtd3 <- multivariatechowlin(series = lf_series,
+                            constant = FALSE,
+                            trend = FALSE,
+                            indicators = indic_series,
+                            ccseries = list(z = z),
+                            ccdefinition = "z=y1+y2+y3",
+                            freq = 4L,
+                            rhos = 1.0,
+                            var = "userDefined",
+                            var.matrix = matrix(
                                 c(0.005, 0.002, 0.001,
                                   0.002, 0.010, 0.002,
                                   0.001, 0.002, 0.003),
                                 nrow = 3,
                                 byrow = TRUE)
-                             )
+)
 
-do.call(cbind, rslt3$estimation$disagg)
+mtd3$estimation$vcov
+#>       [,1]  [,2]  [,3]
+#> [1,] 0.005 0.002 0.001
+#> [2,] 0.002 0.010 0.002
+#> [3,] 0.001 0.002 0.003
+do.call(cbind, mtd3$estimation$disagg)
 #>               y1       y2       y3
 #> 2010 Q1 6.108983 19.72409 1.266923
 #> 2010 Q2 8.107219 19.93250 1.760283
