@@ -677,7 +677,7 @@ x <- y_cs1 + rnorm(n = length(y_cs1), mean = 0, sd = 10)
 y_cs2 <- cubicspline(s = x, t = Y) # with a high frequency preliminary series to benchmark
 ```
 
-### Cholette method
+### Cholette
 
 Cholette method is based on a benchmarking methodology developed at
 Statistics Canada. It is a generalized method relying on the principle
@@ -1070,19 +1070,27 @@ multivariate case.
 # Example: multivariate Chow-Lin and Fernandez models
 
 # Low-frequency data
-Y1 <- ts(c(30.0, 30.6, 31.2, 31.6), frequency = 1, start = c(2010,1))
-Y2 <- ts(c(80.0, 81.2, 82.5, 82.6), frequency = 1, start = c(2010,1))
-Y3 <- ts(c(8.0, 8.1, 8.2, 8.2), frequency = 1, start = c(2010,1))
+Y1 <- ts(c(30.0, 30.6, 31.2, 31.6), frequency = 1, start = c(2010, 1))
+Y2 <- ts(c(80.0, 81.2, 82.5, 82.6), frequency = 1, start = c(2010, 1))
+Y3 <- ts(c(8.0, 8.1, 8.2, 8.2), frequency = 1, start = c(2010, 1))
 lf_series <- list(y1 = Y1, y2 = Y2, y3 = Y3)
 
 # Contemporaneous constraint
-z <- ts(c(27.1,29.8,29.9,31.2,29.4,27.9,30.9,31.7,29.2,30.2,30.6,31.9,29.3,30.4,30.7,32.0), frequency = 4, start = c(2010,1))
+z <- ts(c(27.1, 29.8, 29.9, 31.2, 29.4, 27.9, 30.9, 31.7, 29.2, 30.2, 30.6, 31.9, 29.3, 30.4, 30.7, 32.0), 
+        frequency = 4, 
+        start = c(2010, 1))
 
 # High-frequency indicators
-x11 <- ts(c(7,7.2,8.1,7.5,8.5,7.8,8.1,8.4,8.6,7.8,8.0,8.3,8.7,7.9,8.0,8.6), frequency=4, start=c(2010,1))
-x12 <- ts(c(18,19.5,19.0,19.7,18.5,19.0,20.3,20.0,18.6,19.5,20.4,20.1,18.7,19.1,20.4,20.8), frequency = 4, start = c(2010,1))
+x11 <- ts(c(7.0, 7.2, 8.1, 7.5, 8.5, 7.8, 8.1, 8.4, 8.6, 7.8, 8.0, 8.3, 8.7, 7.9, 8.0, 8.6), 
+          frequency = 4, 
+          start=c(2010, 1))
+x12 <- ts(c(18.0, 19.5, 19.0, 19.7, 18.5, 19.0, 20.3, 20.0, 18.6, 19.5, 20.4, 20.1, 18.7, 19.1, 20.4, 20.8), 
+          frequency = 4, 
+          start = c(2010, 1))
 x2 <- NULL
-x3 <- ts(c(1.5,1.8,2,2.5,2.0,1.5,1.7,2.1,2.1,1.6,1.6,2.2,2.3,1.7,1.9,2.3), frequency = 4, start = c(2010,1))
+x3 <- ts(c(1.5, 1.8, 2.0, 2.5, 2.0, 1.5, 1.7, 2.1, 2.1, 1.6, 1.6, 2.2, 2.3, 1.7, 1.9, 2.3), 
+         frequency = 4, 
+         start = c(2010, 1))
 indic_series = list(y1 = list(x11, x12),
                     y2 = NULL,
                     y3 = x3)
@@ -1192,7 +1200,8 @@ mtd3 <- multivariatechowlin(series = lf_series,
                                   0.002, 0.010, 0.002,
                                   0.001, 0.002, 0.003),
                                 nrow = 3,
-                                byrow = TRUE)
+                                byrow = TRUE
+                            )
 )
 
 mtd3$estimation$vcov
@@ -1221,6 +1230,8 @@ do.call(cbind, mtd3$estimation$disagg)
 ```
 
 ## Calendarization
+
+### Calendarization with Denton
 
 Time series data do not always coincide with calendar periods (e.g.,
 fiscal years starting in March-April or retail data collected in
