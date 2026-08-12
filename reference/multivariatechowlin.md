@@ -173,9 +173,9 @@ x2 <- NULL
 x3 <- ts(c(1.5, 1.8, 2.0, 2.5, 2.0, 1.5, 1.7, 2.1, 2.1, 1.6, 1.6, 2.2, 2.3, 1.7, 1.9, 2.3),
          frequency = 4,
          start = c(2010, 1))
-indic_series = list(y1 = list(x11, x12),
-                    y2 = NULL,
-                    y3 = x3)
+indic_series <- list(y1 = list(x11, x12),
+                     y2 = NULL,
+                     y3 = x3)
 
 # Check consistency between temporal and contemporaneous constraints
 rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # should all be 0
