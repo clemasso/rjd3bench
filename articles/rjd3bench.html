@@ -1243,7 +1243,7 @@ in the multivariate case.</p>
 <span>                    y3 <span class="op">=</span> <span class="va">x3</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Check consistency between temporal and contemporaneous constraints</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Y1</span>,<span class="va">Y2</span>,<span class="va">Y3</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate.ts</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="co"># ok!</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Y1</span>, <span class="va">Y2</span>, <span class="va">Y3</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate.ts</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="co"># should all be 0</span></span>
 <span><span class="co">#&gt; Time Series:</span></span>
 <span><span class="co">#&gt; Start = 2010 </span></span>
 <span><span class="co">#&gt; End = 2013 </span></span>
@@ -1344,8 +1344,8 @@ in the multivariate case.</p>
 <span>                            var <span class="op">=</span> <span class="st">"userDefined"</span>,</span>
 <span>                            var.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
 <span>                                <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.002</span>, <span class="fl">0.001</span>,</span>
-<span>                                  <span class="fl">0.002</span>, <span class="fl">0.010</span>, <span class="fl">0.002</span>,</span>
-<span>                                  <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="fl">0.003</span><span class="op">)</span>,</span>
+<span>                                <span class="fl">0.002</span>, <span class="fl">0.010</span>, <span class="fl">0.002</span>,</span>
+<span>                                <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="fl">0.003</span><span class="op">)</span>,</span>
 <span>                                nrow <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>                                byrow <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>                            <span class="op">)</span></span>
