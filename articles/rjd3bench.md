@@ -1191,14 +1191,14 @@ mtd3 <- multivariatechowlin(
     rhos = 1.0,
     var = "userDefined",
     var.matrix = matrix(
-    c(
-      0.005, 0.002, 0.001,
-      0.002, 0.010, 0.002,
-      0.001, 0.002, 0.003
-    ),
-    nrow = 3,
-    byrow = TRUE
-  )
+        c(
+            0.005, 0.002, 0.001,
+            0.002, 0.010, 0.002,
+            0.001, 0.002, 0.003
+        ),
+        nrow = 3,
+        byrow = TRUE
+    )
 )
 
 mtd3$estimation$vcov
