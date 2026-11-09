@@ -215,7 +215,7 @@ regression and smoothing components.
 
 ``` r
 
-# Example 1: Temporal disaggregation of annual value added in the construction sector using the 
+# Example 1: Temporal disaggregation of annual value added in the construction sector using the
 # Chow-Lin method and a quarterly indicator
 Y <- ts(qna_data$B1G_Y_data[, "B1G_FF"], frequency = 1, start = c(2009, 1))
 x <- ts(qna_data$TURN_Q_data[, "TURN_INDEX_FF"], frequency = 4, start = c(2009, 1))
@@ -230,13 +230,13 @@ print(td)
 #> Use summary() for more details. 
 #> Use plot() to see the decomposition of the disaggregated series.
 
-# Example 2: Interpolation using the Fernandez method without indicators, when the low-frequency 
+# Example 2: Interpolation using the Fernandez method without indicators, when the low-frequency
 # observations corresponds to the last value of the interpolated series (which is the default)
 Y <- rjd3toolkit::aggregate(rjd3toolkit::Retail$RetailSalesTotal, 1)
 ti <- temporal_interpolation(Y, indicators = NULL, model = "Rw", freq = 4, nfcsts = 2)
 y <- ti$estimation$interp # the interpolated series
 
-# Example 3: Temporal disaggregation of atypical-frequency data using the Fernandez method 
+# Example 3: Temporal disaggregation of atypical-frequency data using the Fernandez method
 # with a one-period offset
 Y <- c(500, 510, 525, 520)
 x <- c(97,
@@ -247,7 +247,7 @@ x <- c(97,
 td_raw <- temporal_disaggregation_raw(Y, indicators = x, startoffset = 1,  model = "Rw", freqratio = 5)
 y <- td_raw$estimation$disagg # the disaggregated series
 
-# Example 4: Interpolation of atypical frequency data using the Fernandez method without offset, 
+# Example 4: Interpolation of atypical frequency data using the Fernandez method without offset,
 # when the low-frequency observations corresponds to the first value of the interpolated series 
 Y <- c(500, 510, 525, 520)
 x <- c(490, 492.5, 497.5, 520, 495,

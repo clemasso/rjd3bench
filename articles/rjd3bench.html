@@ -266,7 +266,7 @@ function is available for outputs produced by
 estimated high-frequency series into its regression and smoothing
 components.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Example 1: Temporal disaggregation of annual value added in the construction sector using the </span></span>
+<code class="sourceCode R"><span><span class="co"># Example 1: Temporal disaggregation of annual value added in the construction sector using the</span></span>
 <span><span class="co"># Chow-Lin method and a quarterly indicator</span></span>
 <span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">qna_data</span><span class="op">$</span><span class="va">B1G_Y_data</span><span class="op">[</span>, <span class="st">"B1G_FF"</span><span class="op">]</span>, frequency <span class="op">=</span> <span class="fl">1</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2009</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">qna_data</span><span class="op">$</span><span class="va">TURN_Q_data</span><span class="op">[</span>, <span class="st">"TURN_INDEX_FF"</span><span class="op">]</span>, frequency <span class="op">=</span> <span class="fl">4</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2009</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -281,13 +281,13 @@ components.</p>
 <span><span class="co">#&gt; Use summary() for more details. </span></span>
 <span><span class="co">#&gt; Use plot() to see the decomposition of the disaggregated series.</span></span>
 <span></span>
-<span><span class="co"># Example 2: Interpolation using the Fernandez method without indicators, when the low-frequency </span></span>
+<span><span class="co"># Example 2: Interpolation using the Fernandez method without indicators, when the low-frequency</span></span>
 <span><span class="co"># observations corresponds to the last value of the interpolated series (which is the default)</span></span>
 <span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="fu"><a href="https://rjdverse.github.io/rjd3toolkit/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va"><a href="https://rjdverse.github.io/rjd3toolkit/reference/Retail.html" class="external-link">Retail</a></span><span class="op">$</span><span class="va">RetailSalesTotal</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">ti</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_interpolation.html">temporal_interpolation</a></span><span class="op">(</span><span class="va">Y</span>, indicators <span class="op">=</span> <span class="cn">NULL</span>, model <span class="op">=</span> <span class="st">"Rw"</span>, freq <span class="op">=</span> <span class="fl">4</span>, nfcsts <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">ti</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">interp</span> <span class="co"># the interpolated series</span></span>
 <span></span>
-<span><span class="co"># Example 3: Temporal disaggregation of atypical-frequency data using the Fernandez method </span></span>
+<span><span class="co"># Example 3: Temporal disaggregation of atypical-frequency data using the Fernandez method</span></span>
 <span><span class="co"># with a one-period offset</span></span>
 <span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="fl">510</span>, <span class="fl">525</span>, <span class="fl">520</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">97</span>,</span>
@@ -298,7 +298,7 @@ components.</p>
 <span><span class="va">td_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/temporal_disaggregation_raw.html">temporal_disaggregation_raw</a></span><span class="op">(</span><span class="va">Y</span>, indicators <span class="op">=</span> <span class="va">x</span>, startoffset <span class="op">=</span> <span class="fl">1</span>,  model <span class="op">=</span> <span class="st">"Rw"</span>, freqratio <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">td_raw</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span> <span class="co"># the disaggregated series</span></span>
 <span></span>
-<span><span class="co"># Example 4: Interpolation of atypical frequency data using the Fernandez method without offset, </span></span>
+<span><span class="co"># Example 4: Interpolation of atypical frequency data using the Fernandez method without offset,</span></span>
 <span><span class="co"># when the low-frequency observations corresponds to the first value of the interpolated series </span></span>
 <span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="fl">510</span>, <span class="fl">525</span>, <span class="fl">520</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">490</span>, <span class="fl">492.5</span>, <span class="fl">497.5</span>, <span class="fl">520</span>, <span class="fl">495</span>,</span>
